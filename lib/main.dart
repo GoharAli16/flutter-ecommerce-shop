@@ -17,23 +17,19 @@ import 'features/orders/presentation/providers/orders_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize Firebase
   await Firebase.initializeApp();
-  
+
   // Initialize Hive
   await Hive.initFlutter();
-  
+
   // Initialize services
   await NotificationService.initialize();
   await PaymentService.initialize();
   await AnalyticsService.initialize();
-  
-  runApp(
-    const ProviderScope(
-      child: EcommerceShopApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: EcommerceShopApp()));
 }
 
 class EcommerceShopApp extends ConsumerWidget {
@@ -43,7 +39,7 @@ class EcommerceShopApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerProvider);
     final themeMode = ref.watch(themeModeProvider);
-    
+
     return MaterialApp.router(
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
