@@ -64,7 +64,11 @@ class AIService {
       final predictions = output[0] as List<double>;
       final recommendations = <String>[];
 
-      for (int i = 0; i < predictions.length && recommendations.length < limit; i++) {
+      for (
+        int i = 0;
+        i < predictions.length && recommendations.length < limit;
+        i++
+      ) {
         if (predictions[i] > 0.7) {
           recommendations.add('product_$i');
         }
@@ -144,10 +148,11 @@ class AIService {
   }) {
     final now = DateTime.now();
     final startTime = now.subtract(timeWindow);
-    
+
     final recentActions = userActions
-        .where((action) => 
-            DateTime.parse(action['timestamp']).isAfter(startTime))
+        .where(
+          (action) => DateTime.parse(action['timestamp']).isAfter(startTime),
+        )
         .toList();
 
     // Calculate behavior metrics
@@ -156,7 +161,7 @@ class AIService {
         .map((action) => action['productId'])
         .toSet()
         .length;
-    
+
     final avgSessionDuration = _calculateAvgSessionDuration(recentActions);
     final preferredCategories = _getPreferredCategories(recentActions);
     final spendingPattern = _analyzeSpendingPattern(recentActions);
@@ -197,7 +202,7 @@ class AIService {
     // Convert user data to numerical features
     final userFeatures = _encodeUserFeatures(userId, userHistory);
     final similarUserFeatures = _encodeSimilarUserFeatures(similarUsers);
-    
+
     return [userFeatures + similarUserFeatures];
   }
 
@@ -213,7 +218,7 @@ class AIService {
       marketData['inventory'] ?? 0.0,
       marketData['seasonality'] ?? 0.0,
     ];
-    
+
     return [features];
   }
 
@@ -228,52 +233,66 @@ class AIService {
       _calculateTransactionFrequency(userHistory),
       _calculateLocationAnomaly(transactionData, userHistory),
     ];
-    
+
     return [features];
   }
 
-  static List<double> _encodeUserFeatures(String userId, List<String> userHistory) {
+  static List<double> _encodeUserFeatures(
+    String userId,
+    List<String> userHistory,
+  ) {
     // Simple encoding - in real app, use proper feature engineering
-    return List.generate(50, (index) => (userId.hashCode + index) % 100 / 100.0);
+    return List.generate(
+      50,
+      (index) => (userId.hashCode + index) % 100 / 100.0,
+    );
   }
 
   static List<double> _encodeSimilarUserFeatures(List<String> similarUsers) {
-    return List.generate(50, (index) => 
-        similarUsers.length > index ? 1.0 : 0.0);
+    return List.generate(
+      50,
+      (index) => similarUsers.length > index ? 1.0 : 0.0,
+    );
   }
 
   static List<String> _getDefaultRecommendations() {
     return List.generate(10, (index) => 'default_product_$index');
   }
 
-  static Duration _calculateAvgSessionDuration(List<Map<String, dynamic>> actions) {
+  static Duration _calculateAvgSessionDuration(
+    List<Map<String, dynamic>> actions,
+  ) {
     if (actions.isEmpty) return Duration.zero;
-    
+
     // Simple calculation - in real app, use proper session analysis
     return const Duration(minutes: 15);
   }
 
-  static List<String> _getPreferredCategories(List<Map<String, dynamic>> actions) {
+  static List<String> _getPreferredCategories(
+    List<Map<String, dynamic>> actions,
+  ) {
     final categoryCount = <String, int>{};
-    
+
     for (final action in actions) {
       final category = action['category'] as String?;
       if (category != null) {
         categoryCount[category] = (categoryCount[category] ?? 0) + 1;
       }
     }
-    
+
     final sortedCategories = categoryCount.entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
-    
+
     return sortedCategories.take(5).map((e) => e.key).toList();
   }
 
-  static Map<String, dynamic> _analyzeSpendingPattern(List<Map<String, dynamic>> actions) {
+  static Map<String, dynamic> _analyzeSpendingPattern(
+    List<Map<String, dynamic>> actions,
+  ) {
     final totalSpent = actions
         .where((action) => action['type'] == 'purchase')
         .fold(0.0, (sum, action) => sum + (action['amount'] ?? 0.0));
-    
+
     return {
       'totalSpent': totalSpent,
       'avgTransactionValue': totalSpent / actions.length,
@@ -286,11 +305,16 @@ class AIService {
     return actions.length / 100.0;
   }
 
-  static List<String> _getPersonalizedProducts(Map<String, dynamic> userProfile) {
+  static List<String> _getPersonalizedProducts(
+    Map<String, dynamic> userProfile,
+  ) {
     return ['product_1', 'product_2', 'product_3'];
   }
 
-  static List<String> _getPersonalizedTopics(Map<String, dynamic> userProfile, List<String> trendingTopics) {
+  static List<String> _getPersonalizedTopics(
+    Map<String, dynamic> userProfile,
+    List<String> trendingTopics,
+  ) {
     return trendingTopics.take(3).toList();
   }
 
@@ -298,7 +322,9 @@ class AIService {
     return ['offer_1', 'offer_2'];
   }
 
-  static Map<String, dynamic> _getContentSchedule(Map<String, dynamic> userProfile) {
+  static Map<String, dynamic> _getContentSchedule(
+    Map<String, dynamic> userProfile,
+  ) {
     return {
       'morning': ['product_1', 'offer_1'],
       'afternoon': ['product_2'],
@@ -306,24 +332,38 @@ class AIService {
     };
   }
 
-  static double _calculateAvgTransactionAmount(List<Map<String, dynamic>> userHistory) {
+  static double _calculateAvgTransactionAmount(
+    List<Map<String, dynamic>> userHistory,
+  ) {
     if (userHistory.isEmpty) return 0.0;
-    
-    final purchases = userHistory.where((action) => action['type'] == 'purchase');
+
+    final purchases = userHistory.where(
+      (action) => action['type'] == 'purchase',
+    );
     if (purchases.isEmpty) return 0.0;
-    
-    final total = purchases.fold(0.0, (sum, action) => sum + (action['amount'] ?? 0.0));
+
+    final total = purchases.fold(
+      0.0,
+      (sum, action) => sum + (action['amount'] ?? 0.0),
+    );
     return total / purchases.length;
   }
 
-  static double _calculateTransactionFrequency(List<Map<String, dynamic>> userHistory) {
+  static double _calculateTransactionFrequency(
+    List<Map<String, dynamic>> userHistory,
+  ) {
     if (userHistory.isEmpty) return 0.0;
-    
-    final purchases = userHistory.where((action) => action['type'] == 'purchase');
+
+    final purchases = userHistory.where(
+      (action) => action['type'] == 'purchase',
+    );
     return purchases.length / 30.0; // Transactions per day
   }
 
-  static double _calculateLocationAnomaly(Map<String, dynamic> transactionData, List<Map<String, dynamic>> userHistory) {
+  static double _calculateLocationAnomaly(
+    Map<String, dynamic> transactionData,
+    List<Map<String, dynamic>> userHistory,
+  ) {
     // Simple location anomaly detection
     return 0.0;
   }

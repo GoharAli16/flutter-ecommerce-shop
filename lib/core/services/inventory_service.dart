@@ -175,7 +175,9 @@ class InventoryService {
     }
   }
 
-  static Future<Map<String, dynamic>> getInventoryStatus(String productId) async {
+  static Future<Map<String, dynamic>> getInventoryStatus(
+    String productId,
+  ) async {
     // Mock implementation - in real app, this would fetch from API
     return {
       'productId': productId,
@@ -210,7 +212,9 @@ class InventoryService {
     ];
   }
 
-  static Future<Map<String, dynamic>> getInventoryForecast(String productId) async {
+  static Future<Map<String, dynamic>> getInventoryForecast(
+    String productId,
+  ) async {
     // Mock implementation - in real app, this would use ML models
     return {
       'productId': productId,
@@ -227,7 +231,10 @@ class InventoryService {
     };
   }
 
-  static Future<void> setReorderPoint(String productId, int reorderPoint) async {
+  static Future<void> setReorderPoint(
+    String productId,
+    int reorderPoint,
+  ) async {
     if (!_isConnected) return;
 
     try {
@@ -261,7 +268,10 @@ class InventoryService {
     }
   }
 
-  static Future<void> releaseReservedStock(String productId, int quantity) async {
+  static Future<void> releaseReservedStock(
+    String productId,
+    int quantity,
+  ) async {
     if (!_isConnected) return;
 
     try {

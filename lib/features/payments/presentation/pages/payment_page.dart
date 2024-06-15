@@ -53,24 +53,21 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
             // Order Summary
             _buildOrderSummary(),
             const SizedBox(height: 24),
-            
+
             // Payment Methods
             const Text(
               'Select Payment Method',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-            
+
             Expanded(
               child: ListView.builder(
                 itemCount: _paymentMethods.length,
                 itemBuilder: (context, index) {
                   final method = _paymentMethods[index];
                   final isSelected = _selectedPaymentMethod == method['id'];
-                  
+
                   return Card(
                     margin: const EdgeInsets.only(bottom: 12),
                     child: RadioListTile<String>(
@@ -93,17 +90,14 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
                 },
               ),
             ),
-            
+
             // Pay Button
             SizedBox(
               width: double.infinity,
               height: 50,
               child: ElevatedButton(
                 onPressed: _processPayment,
-                child: const Text(
-                  'Pay Now',
-                  style: TextStyle(fontSize: 16),
-                ),
+                child: const Text('Pay Now', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
@@ -121,21 +115,14 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
           children: [
             const Text(
               'Order Summary',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             _buildSummaryRow('Subtotal', '\$299.99'),
             _buildSummaryRow('Shipping', '\$9.99'),
             _buildSummaryRow('Tax', '\$24.00'),
             const Divider(),
-            _buildSummaryRow(
-              'Total',
-              '\$333.98',
-              isTotal: true,
-            ),
+            _buildSummaryRow('Total', '\$333.98', isTotal: true),
           ],
         ),
       ),
@@ -172,9 +159,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
     // Simulate payment processing
@@ -182,7 +167,7 @@ class _PaymentPageState extends ConsumerState<PaymentPage> {
 
     if (mounted) {
       Navigator.pop(context); // Close loading dialog
-      
+
       // Show success dialog
       showDialog(
         context: context,

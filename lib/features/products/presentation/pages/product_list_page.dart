@@ -49,7 +49,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
               itemBuilder: (context, index) {
                 final category = _categories[index];
                 final isSelected = _selectedCategory == category;
-                
+
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: FilterChip(
@@ -65,7 +65,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
               },
             ),
           ),
-          
+
           // Product Grid
           Expanded(
             child: GridView.builder(
@@ -104,14 +104,10 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
                   top: Radius.circular(8),
                 ),
               ),
-              child: const Icon(
-                Icons.image,
-                size: 50,
-                color: Colors.grey,
-              ),
+              child: const Icon(Icons.image, size: 50, color: Colors.grey),
             ),
           ),
-          
+
           // Product Info
           Expanded(
             flex: 2,
@@ -141,11 +137,7 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                        size: 16,
-                      ),
+                      const Icon(Icons.star, color: Colors.amber, size: 16),
                       Text(
                         '4.${index % 5}',
                         style: const TextStyle(fontSize: 12),
@@ -205,9 +197,18 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
               trailing: DropdownButton<String>(
                 value: _sortBy,
                 items: const [
-                  DropdownMenuItem(value: 'Popularity', child: Text('Popularity')),
-                  DropdownMenuItem(value: 'Price Low to High', child: Text('Price Low to High')),
-                  DropdownMenuItem(value: 'Price High to Low', child: Text('Price High to Low')),
+                  DropdownMenuItem(
+                    value: 'Popularity',
+                    child: Text('Popularity'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Price Low to High',
+                    child: Text('Price Low to High'),
+                  ),
+                  DropdownMenuItem(
+                    value: 'Price High to Low',
+                    child: Text('Price High to Low'),
+                  ),
                   DropdownMenuItem(value: 'Newest', child: Text('Newest')),
                 ],
                 onChanged: (value) {

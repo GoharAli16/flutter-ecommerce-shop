@@ -18,7 +18,7 @@ class OfflineService {
     _cartBox = await Hive.openBox(_cartBoxName);
     _wishlistBox = await Hive.openBox(_wishlistBoxName);
     _userPrefsBox = await Hive.openBox(_userPrefsBoxName);
-    
+
     // Initialize SharedPreferences
     _prefs = await SharedPreferences.getInstance();
   }
@@ -26,7 +26,7 @@ class OfflineService {
   // Cart Operations
   static Future<void> addToCart(Map<String, dynamic> item) async {
     if (_cartBox == null) return;
-    
+
     final cartItem = {
       'id': item['id'],
       'name': item['name'],
@@ -35,21 +35,21 @@ class OfflineService {
       'image': item['image'],
       'addedAt': DateTime.now().toIso8601String(),
     };
-    
+
     await _cartBox!.put(item['id'], cartItem);
     await _markForSync('cart');
   }
 
   static Future<void> removeFromCart(String itemId) async {
     if (_cartBox == null) return;
-    
+
     await _cartBox!.delete(itemId);
     await _markForSync('cart');
   }
 
   static Future<void> updateCartQuantity(String itemId, int quantity) async {
     if (_cartBox == null) return;
-    
+
     final item = _cartBox!.get(itemId);
     if (item != null) {
       item['quantity'] = quantity;
@@ -60,7 +60,7 @@ class OfflineService {
 
   static List<Map<String, dynamic>> getCartItems() {
     if (_cartBox == null) return [];
-    
+
     return _cartBox!.values
         .map((item) => Map<String, dynamic>.from(item))
         .toList();
@@ -68,7 +68,7 @@ class OfflineService {
 
   static Future<void> clearCart() async {
     if (_cartBox == null) return;
-    
+
     await _cartBox!.clear();
     await _markForSync('cart');
   }
@@ -76,7 +76,7 @@ class OfflineService {
   // Wishlist Operations
   static Future<void> addToWishlist(Map<String, dynamic> item) async {
     if (_wishlistBox == null) return;
-    
+
     final wishlistItem = {
       'id': item['id'],
       'name': item['name'],
@@ -84,21 +84,21 @@ class OfflineService {
       'image': item['image'],
       'addedAt': DateTime.now().toIso8601String(),
     };
-    
+
     await _wishlistBox!.put(item['id'], wishlistItem);
     await _markForSync('wishlist');
   }
 
   static Future<void> removeFromWishlist(String itemId) async {
     if (_wishlistBox == null) return;
-    
+
     await _wishlistBox!.delete(itemId);
     await _markForSync('wishlist');
   }
 
   static List<Map<String, dynamic>> getWishlistItems() {
     if (_wishlistBox == null) return [];
-    
+
     return _wishlistBox!.values
         .map((item) => Map<String, dynamic>.from(item))
         .toList();
@@ -112,7 +112,7 @@ class OfflineService {
   // User Preferences
   static Future<void> saveUserPreference(String key, dynamic value) async {
     if (_userPrefsBox == null) return;
-    
+
     await _userPrefsBox!.put(key, value);
   }
 
@@ -124,16 +124,16 @@ class OfflineService {
   // Search History
   static Future<void> addSearchHistory(String query) async {
     if (_prefs == null) return;
-    
+
     final searchHistory = getSearchHistory();
     searchHistory.remove(query); // Remove if exists
     searchHistory.insert(0, query); // Add to beginning
-    
+
     // Keep only last 20 searches
     if (searchHistory.length > 20) {
       searchHistory.removeRange(20, searchHistory.length);
     }
-    
+
     await _prefs!.setStringList('search_history', searchHistory);
   }
 
@@ -150,28 +150,28 @@ class OfflineService {
   // Recently Viewed Products
   static Future<void> addRecentlyViewed(Map<String, dynamic> product) async {
     if (_prefs == null) return;
-    
+
     final recentlyViewed = getRecentlyViewed();
     recentlyViewed.removeWhere((item) => item['id'] == product['id']);
     recentlyViewed.insert(0, {
       ...product,
       'viewedAt': DateTime.now().toIso8601String(),
     });
-    
+
     // Keep only last 50 products
     if (recentlyViewed.length > 50) {
       recentlyViewed.removeRange(50, recentlyViewed.length);
     }
-    
+
     await _prefs!.setString('recently_viewed', jsonEncode(recentlyViewed));
   }
 
   static List<Map<String, dynamic>> getRecentlyViewed() {
     if (_prefs == null) return [];
-    
+
     final jsonString = _prefs!.getString('recently_viewed');
     if (jsonString == null) return [];
-    
+
     try {
       final List<dynamic> jsonList = jsonDecode(jsonString);
       return jsonList.map((item) => Map<String, dynamic>.from(item)).toList();
@@ -183,22 +183,22 @@ class OfflineService {
   // Sync Status Management
   static Future<void> _markForSync(String dataType) async {
     if (_prefs == null) return;
-    
+
     final syncStatus = getSyncStatus();
     syncStatus[dataType] = {
       'needsSync': true,
       'lastModified': DateTime.now().toIso8601String(),
     };
-    
+
     await _prefs!.setString(_syncStatusKey, jsonEncode(syncStatus));
   }
 
   static Map<String, dynamic> getSyncStatus() {
     if (_prefs == null) return {};
-    
+
     final jsonString = _prefs!.getString(_syncStatusKey);
     if (jsonString == null) return {};
-    
+
     try {
       return Map<String, dynamic>.from(jsonDecode(jsonString));
     } catch (e) {
@@ -208,13 +208,13 @@ class OfflineService {
 
   static Future<void> markAsSynced(String dataType) async {
     if (_prefs == null) return;
-    
+
     final syncStatus = getSyncStatus();
     syncStatus[dataType] = {
       'needsSync': false,
       'lastSynced': DateTime.now().toIso8601String(),
     };
-    
+
     await _prefs!.setString(_syncStatusKey, jsonEncode(syncStatus));
   }
 
@@ -238,7 +238,7 @@ class OfflineService {
         await _cartBox?.put(item['id'], item);
       }
     }
-    
+
     // Import wishlist
     if (data['wishlist'] != null) {
       await _wishlistBox?.clear();
@@ -246,17 +246,23 @@ class OfflineService {
         await _wishlistBox?.put(item['id'], item);
       }
     }
-    
+
     // Import search history
     if (data['searchHistory'] != null) {
-      await _prefs?.setStringList('search_history', List<String>.from(data['searchHistory']));
+      await _prefs?.setStringList(
+        'search_history',
+        List<String>.from(data['searchHistory']),
+      );
     }
-    
+
     // Import recently viewed
     if (data['recentlyViewed'] != null) {
-      await _prefs?.setString('recently_viewed', jsonEncode(data['recentlyViewed']));
+      await _prefs?.setString(
+        'recently_viewed',
+        jsonEncode(data['recentlyViewed']),
+      );
     }
-    
+
     // Import preferences
     if (data['preferences'] != null) {
       await _userPrefsBox?.clear();
@@ -276,11 +282,11 @@ class OfflineService {
 
   static Future<int> getCacheSize() async {
     int size = 0;
-    
+
     if (_cartBox != null) size += _cartBox!.length;
     if (_wishlistBox != null) size += _wishlistBox!.length;
     if (_userPrefsBox != null) size += _userPrefsBox!.length;
-    
+
     return size;
   }
 
